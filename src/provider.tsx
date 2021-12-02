@@ -29,6 +29,8 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   const isBooted = React.useRef(false);
   const isInitialized = React.useRef(false);
 
+  var w = window;
+
   console.log('appid provider', appId)
 
   if (!isEmptyObject(rest) && __DEV__)
@@ -43,7 +45,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   const boot = React.useCallback(
     (props?: IntercomProps) => {
       // @ts-ignore
-      if (!window[appId].Intercom && !shouldInitialize) {
+      if (!w[appId].Intercom && !shouldInitialize) {
         logger.log(
           'warn',
           'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
@@ -62,7 +64,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
       };
 
       // @ts-ignore
-      window[appId].intercomSettings = metaData;
+      w[appId].intercomSettings = metaData;
       IntercomAPI('boot', metaData);
       isBooted.current = true;
     },
@@ -91,7 +93,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
       callback: (() => void) | (() => string),
     ) => {
       // @ts-ignore
-      if (!window[appId].Intercom && !shouldInitialize) {
+      if (!w[appId].Intercom && !shouldInitialize) {
         logger.log(
           'warn',
           'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
@@ -126,9 +128,9 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
 
     IntercomAPI('shutdown');
     // @ts-ignore
-    delete window[appId].Intercom;
+    delete w[appId].Intercom;
     // @ts-ignore
-    delete window[appId].intercomSettings;
+    delete w[appId].intercomSettings;
     isBooted.current = false;
   }, []);
 
@@ -148,7 +150,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
         }
         const rawProps = mapIntercomPropsToRawIntercomProps(props);
         // @ts-ignore
-        window[appId].intercomSettings = { ...window[appId].intercomSettings, ...rawProps };
+        w[appId].intercomSettings = { ...window[appId].intercomSettings, ...rawProps };
         IntercomAPI('update', rawProps);
       });
     },
