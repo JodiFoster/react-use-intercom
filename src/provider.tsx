@@ -14,68 +14,60 @@ import {
 import { isEmptyObject, isSSR } from './utils';
 
 export const IntercomProvider: React.FC<IntercomProviderProps> = ({
-  appId,
-  autoBoot = false,
-  autoBootProps,
-  children,
-  onHide,
-  onShow,
-  onUnreadCountChange,
-  shouldInitialize = !isSSR,
-  apiBase,
-  initializeDelay,
-  ...rest
-}) => {
+                                                                    appId,
+                                                                    autoBoot = false,
+                                                                    autoBootProps,
+                                                                    children,
+                                                                    onHide,
+                                                                    onShow,
+                                                                    onUnreadCountChange,
+                                                                    shouldInitialize = !isSSR,
+                                                                    apiBase,
+                                                                    initializeDelay,
+                                                                    ...rest
+                                                                  }) => {
   const isBooted = React.useRef(false);
   const isInitialized = React.useRef(false);
 
-  var w = window;
-  var ic = w.Intercom;
-
-
-  console.log('appid provider', appId)
-
   if (!isEmptyObject(rest) && __DEV__)
     logger.log(
-      'error',
-      [
-        'some invalid props were passed to IntercomProvider. ',
-        `Please check following props: ${Object.keys(rest).join(', ')}.`,
-      ].join(''),
+        'error',
+        [
+          'some invalid props were passed to IntercomProvider. ',
+          `Please check following props: ${Object.keys(rest).join(', ')}.`,
+        ].join(''),
     );
 
   const boot = React.useCallback(
-    (props?: IntercomProps) => {
-      // @ts-ignore
-      if (!ic.appId && !shouldInitialize) {
-        logger.log(
-          'warn',
-          'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
-        );
-        return;
-      }
+      (props?: IntercomProps) => {
+        // @ts-ignore
+        if (!window[appId].Intercom && !shouldInitialize) {
+          logger.log(
+              'warn',
+              'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
+          );
+          return;
+        }
 
-      if (isBooted.current) {
-        console.log('is booted')
-        return;
-      }
+        if (isBooted.current) {
+          return;
+        }
 
-      const metaData: RawIntercomBootProps = {
-        app_id: appId,
-        ...(apiBase && { api_base: apiBase }),
-        ...(props && mapIntercomPropsToRawIntercomProps(props)),
-      };
+        const metaData: RawIntercomBootProps = {
+          app_id: appId,
+          ...(apiBase && { api_base: apiBase }),
+          ...(props && mapIntercomPropsToRawIntercomProps(props)),
+        };
 
-      // @ts-ignore
-      ic[appId].intercomSettings = metaData;
-      IntercomAPI('boot', metaData);
-      isBooted.current = true;
-    },
-    [apiBase, appId, shouldInitialize],
+        // @ts-ignore
+        window[appId].intercomSettings = metaData;
+        IntercomAPI('boot', metaData);
+        isBooted.current = true;
+      },
+      [apiBase, appId, shouldInitialize],
   );
 
   if (!isSSR && shouldInitialize && !isInitialized.current) {
-    console.log('initialising')
     initialize(appId, initializeDelay);
 
     // attach listeners
@@ -92,32 +84,32 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   }
 
   const ensureIntercom = React.useCallback(
-    (
-      functionName: string = 'A function',
-      callback: (() => void) | (() => string),
-    ) => {
-      // @ts-ignore
-      if (!w[appId].Intercom && !shouldInitialize) {
-        logger.log(
-          'warn',
-          'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
-        );
-        return;
-      }
-      if (!isBooted.current) {
-        logger.log(
-          'warn',
-          [
-            `'${functionName}' was called but Intercom has not booted yet. `,
-            `Please call 'boot' before calling '${functionName}' or `,
-            `set 'autoBoot' to true in the IntercomProvider.`,
-          ].join(''),
-        );
-        return;
-      }
-      return callback();
-    },
-    [shouldInitialize],
+      (
+          functionName: string = 'A function',
+          callback: (() => void) | (() => string),
+      ) => {
+        // @ts-ignore
+        if (!window[appId].Intercom && !shouldInitialize) {
+          logger.log(
+              'warn',
+              'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
+          );
+          return;
+        }
+        if (!isBooted.current) {
+          logger.log(
+              'warn',
+              [
+                `'${functionName}' was called but Intercom has not booted yet. `,
+                `Please call 'boot' before calling '${functionName}' or `,
+                `set 'autoBoot' to true in the IntercomProvider.`,
+              ].join(''),
+          );
+          return;
+        }
+        return callback();
+      },
+      [shouldInitialize],
   );
 
   const shutdown = React.useCallback(() => {
@@ -131,10 +123,8 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
     if (!isBooted.current) return;
 
     IntercomAPI('shutdown');
-    // @ts-ignore
-    delete w[appId].Intercom;
-    // @ts-ignore
-    delete w[appId].intercomSettings;
+    delete window.Intercom;
+    delete window.intercomSettings;
     isBooted.current = false;
   }, []);
 
@@ -146,19 +136,18 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   }, [ensureIntercom]);
 
   const update = React.useCallback(
-    (props?: IntercomProps) => {
-      ensureIntercom('update', () => {
-        if (!props) {
-          refresh();
-          return;
-        }
-        const rawProps = mapIntercomPropsToRawIntercomProps(props);
-        // @ts-ignore
-        w[appId].intercomSettings = { ...window[appId].intercomSettings, ...rawProps };
-        IntercomAPI('update', rawProps);
-      });
-    },
-    [ensureIntercom, refresh],
+      (props?: IntercomProps) => {
+        ensureIntercom('update', () => {
+          if (!props) {
+            refresh();
+            return;
+          }
+          const rawProps = mapIntercomPropsToRawIntercomProps(props);
+          window.intercomSettings = { ...window.intercomSettings, ...rawProps };
+          IntercomAPI('update', rawProps);
+        });
+      },
+      [ensureIntercom, refresh],
   );
 
   const hide = React.useCallback(() => {
@@ -178,16 +167,16 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   }, [ensureIntercom]);
 
   const showNewMessages = React.useCallback(
-    (message?: string) => {
-      ensureIntercom('showNewMessage', () => {
-        if (!message) {
-          IntercomAPI('showNewMessage');
-        } else {
-          IntercomAPI('showNewMessage', message);
-        }
-      });
-    },
-    [ensureIntercom],
+      (message?: string) => {
+        ensureIntercom('showNewMessage', () => {
+          if (!message) {
+            IntercomAPI('showNewMessage');
+          } else {
+            IntercomAPI('showNewMessage', message);
+          }
+        });
+      },
+      [ensureIntercom],
   );
 
   const getVisitorId = React.useCallback(() => {
@@ -197,25 +186,25 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   }, [ensureIntercom]);
 
   const startTour = React.useCallback(
-    (tourId: number) => {
-      ensureIntercom('startTour', () => {
-        IntercomAPI('startTour', tourId);
-      });
-    },
-    [ensureIntercom],
+      (tourId: number) => {
+        ensureIntercom('startTour', () => {
+          IntercomAPI('startTour', tourId);
+        });
+      },
+      [ensureIntercom],
   );
 
   const trackEvent = React.useCallback(
-    (event: string, metaData?: object) => {
-      ensureIntercom('trackEvent', () => {
-        if (metaData) {
-          IntercomAPI('trackEvent', event, metaData);
-        } else {
-          IntercomAPI('trackEvent', event);
-        }
-      });
-    },
-    [ensureIntercom],
+      (event: string, metaData?: object) => {
+        ensureIntercom('trackEvent', () => {
+          if (metaData) {
+            IntercomAPI('trackEvent', event, metaData);
+          } else {
+            IntercomAPI('trackEvent', event);
+          }
+        });
+      },
+      [ensureIntercom],
   );
 
   const providerValue = React.useMemo<IntercomContextValues>(() => {
@@ -249,9 +238,9 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   const content = React.useMemo(() => children, [children]);
 
   return (
-    <IntercomContext.Provider value={providerValue}>
-      {content}
-    </IntercomContext.Provider>
+      <IntercomContext.Provider value={providerValue}>
+        {content}
+      </IntercomContext.Provider>
   );
 };
 
