@@ -8,7 +8,8 @@
  * @see {@link https://developers.intercom.com/installing-intercom/docs/basic-javascript}
  */
 const initialize = (appId: string, timeout = 0) => {
-  var w = window;
+  var w = window[appId];
+  console.log('appID', appId)
   var ic = w.Intercom;
   if (typeof ic === 'function') {
     ic('reattach_activator');

@@ -40,7 +40,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
 
   const boot = React.useCallback(
     (props?: IntercomProps) => {
-      if (!window.Intercom && !shouldInitialize) {
+      if (!window[appId].Intercom && !shouldInitialize) {
         logger.log(
           'warn',
           'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
@@ -58,7 +58,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
         ...(props && mapIntercomPropsToRawIntercomProps(props)),
       };
 
-      window.intercomSettings = metaData;
+      window[appId].intercomSettings = metaData;
       IntercomAPI('boot', metaData);
       isBooted.current = true;
     },
@@ -86,7 +86,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
       functionName: string = 'A function',
       callback: (() => void) | (() => string),
     ) => {
-      if (!window.Intercom && !shouldInitialize) {
+      if (!window[appId].Intercom && !shouldInitialize) {
         logger.log(
           'warn',
           'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
@@ -120,8 +120,8 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
     if (!isBooted.current) return;
 
     IntercomAPI('shutdown');
-    delete window.Intercom;
-    delete window.intercomSettings;
+    delete window[appId].Intercom;
+    delete window[appId].intercomSettings;
     isBooted.current = false;
   }, []);
 
@@ -140,7 +140,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
           return;
         }
         const rawProps = mapIntercomPropsToRawIntercomProps(props);
-        window.intercomSettings = { ...window.intercomSettings, ...rawProps };
+        window[appId].intercomSettings = { ...window[appId].intercomSettings, ...rawProps };
         IntercomAPI('update', rawProps);
       });
     },
