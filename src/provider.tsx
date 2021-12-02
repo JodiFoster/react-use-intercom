@@ -42,6 +42,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
 
   const boot = React.useCallback(
     (props?: IntercomProps) => {
+      // @ts-ignore
       if (!window[appId].Intercom && !shouldInitialize) {
         logger.log(
           'warn',
@@ -60,6 +61,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
         ...(props && mapIntercomPropsToRawIntercomProps(props)),
       };
 
+      // @ts-ignore
       window[appId].intercomSettings = metaData;
       IntercomAPI('boot', metaData);
       isBooted.current = true;
@@ -88,6 +90,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
       functionName: string = 'A function',
       callback: (() => void) | (() => string),
     ) => {
+      // @ts-ignore
       if (!window[appId].Intercom && !shouldInitialize) {
         logger.log(
           'warn',
@@ -122,7 +125,9 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
     if (!isBooted.current) return;
 
     IntercomAPI('shutdown');
+    // @ts-ignore
     delete window[appId].Intercom;
+    // @ts-ignore
     delete window[appId].intercomSettings;
     isBooted.current = false;
   }, []);
@@ -142,6 +147,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
           return;
         }
         const rawProps = mapIntercomPropsToRawIntercomProps(props);
+        // @ts-ignore
         window[appId].intercomSettings = { ...window[appId].intercomSettings, ...rawProps };
         IntercomAPI('update', rawProps);
       });
