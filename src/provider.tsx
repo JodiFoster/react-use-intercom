@@ -29,6 +29,8 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   const isBooted = React.useRef(false);
   const isInitialized = React.useRef(false);
 
+  console.log('appid provider', appId)
+
   if (!isEmptyObject(rest) && __DEV__)
     logger.log(
       'error',
