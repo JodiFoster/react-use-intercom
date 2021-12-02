@@ -63,7 +63,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
         };
 
         // @ts-ignore
-        window[appId].intercomSettings = metaData;
+        window[appId]?.intercomSettings = metaData;
         console.log('calling the api to boot')
         IntercomAPI('boot', metaData);
         isBooted.current = true;
@@ -94,7 +94,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
           callback: (() => void) | (() => string),
       ) => {
         // @ts-ignore
-        if (!window[appId].Intercom && !shouldInitialize) {
+        if (!window[appId]?.Intercom && !shouldInitialize) {
           logger.log(
               'warn',
               'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
