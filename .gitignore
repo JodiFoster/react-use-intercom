@@ -1,10 +1,4 @@
 *.log
-.DS_Store
-node_modules
-.cache
-dist
-
-config/.env
 test/config/.env
 
 /cypress/videos
