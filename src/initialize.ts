@@ -11,9 +11,11 @@ const initialize = (appId: string, timeout = 0) => {
   var w = window;
   var ic = w.Intercom;
   if (typeof ic === 'function') {
+    console.log('in the first bit')
     ic('reattach_activator');
-    ic('update', w.intercomSettings);
+    ic('update', w.coachIntercomSettings);
   } else {
+    console.log('in the second bit')
     var d = document;
     var i = function() {
       i.c(arguments);
