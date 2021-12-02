@@ -56,6 +56,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
       }
 
       if (isBooted.current) {
+        console.log('is booted')
         return;
       }
 
@@ -66,7 +67,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
       };
 
       // @ts-ignore
-      ic.appId.intercomSettings = metaData;
+      ic[appId].intercomSettings = metaData;
       IntercomAPI('boot', metaData);
       isBooted.current = true;
     },
@@ -74,6 +75,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   );
 
   if (!isSSR && shouldInitialize && !isInitialized.current) {
+    console.log('initialising')
     initialize(appId, initializeDelay);
 
     // attach listeners
