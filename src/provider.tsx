@@ -43,7 +43,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
       (props?: IntercomProps) => {
           console.log('in boot')
         // @ts-ignore
-        if (!window[appId].Intercom && !shouldInitialize) {
+        if (!window?[appId].Intercom && !shouldInitialize) {
           logger.log(
               'warn',
               'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
