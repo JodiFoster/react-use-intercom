@@ -28,6 +28,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
                                                                   }) => {
   const isBooted = React.useRef(false);
   const isInitialized = React.useRef(false);
+  console.log('in the provider')
 
   if (!isEmptyObject(rest) && __DEV__)
     logger.log(
@@ -40,6 +41,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
 
   const boot = React.useCallback(
       (props?: IntercomProps) => {
+          console.log('in boot')
         // @ts-ignore
         if (!window[appId].Intercom && !shouldInitialize) {
           logger.log(
@@ -50,6 +52,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
         }
 
         if (isBooted.current) {
+            console.log('is booted')
           return;
         }
 
@@ -61,6 +64,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
 
         // @ts-ignore
         window[appId].intercomSettings = metaData;
+        console.log('calling the api to boot')
         IntercomAPI('boot', metaData);
         isBooted.current = true;
       },
@@ -68,6 +72,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   );
 
   if (!isSSR && shouldInitialize && !isInitialized.current) {
+      console.log('initialising')
     initialize(appId, initializeDelay);
 
     // attach listeners
