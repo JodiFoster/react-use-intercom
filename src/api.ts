@@ -11,7 +11,7 @@ import { isSSR } from './utils';
  * @see {@link https://developers.intercom.com/installing-intercom/docs/intercom-javascript}
  */
 const IntercomAPI = (method: IntercomMethod, ...args: Array<any>) => {
-  console.log('test')
+  console.log('test', args)
   if (!isSSR && window.Intercom) {
     return window.Intercom.apply(null, [method, ...args]);
   } else {
