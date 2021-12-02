@@ -10,11 +10,13 @@
 const initialize = (appId: string, timeout = 0) => {
   var w = window;
   console.log('appIDa', appId)
-  var ic = w[appId]?.Intercom;
+  var ic = w.Intercom;
+  var intercomInstance = ic[appId]
   console.log('ic', ic)
-  if (typeof ic === 'function') {
-    ic('reattach_activator');
-    ic('update', w.intercomSettings);
+  console.log('intercom instance', intercomInstance)
+  if (typeof intercomInstance === 'function') {
+    intercomInstance('reattach_activator');
+    intercomInstance('update', w.intercomSettings);
   } else {
     var d = document;
     var i = function() {

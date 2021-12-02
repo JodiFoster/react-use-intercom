@@ -30,6 +30,8 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   const isInitialized = React.useRef(false);
 
   var w = window;
+  var ic = w.Intercom;
+
 
   console.log('appid provider', appId)
 
@@ -45,7 +47,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
   const boot = React.useCallback(
     (props?: IntercomProps) => {
       // @ts-ignore
-      if (!w[appId].Intercom && !shouldInitialize) {
+      if (!ic.appId && !shouldInitialize) {
         logger.log(
           'warn',
           'Intercom instance is not initialized because `shouldInitialize` is set to `false` in `IntercomProvider`',
@@ -64,7 +66,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
       };
 
       // @ts-ignore
-      w[appId].intercomSettings = metaData;
+      ic.appId.intercomSettings = metaData;
       IntercomAPI('boot', metaData);
       isBooted.current = true;
     },
