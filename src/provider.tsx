@@ -71,15 +71,18 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
           console.log('window', window)
           console.log('app id', appId)
         // @ts-ignore
-
           window.coachIntercomSettings = metaData;
-        console.log('calling the api to boot')
+        console.log('calling the api to boot', metaData)
         IntercomAPI('boot', metaData);
         isBooted.current = true;
       },
       [apiBase, appId, shouldInitialize],
   );
 
+  console.log('!isInitialized.current', !isInitialized.current)
+  console.log('!isSSR', !isSSR)
+  console.log('shouldInitialize', shouldInitialize)
+    // need to get in here
   if (!isSSR && shouldInitialize && !isInitialized.current) {
       console.log('initialising')
     initialize(appId, initializeDelay);
