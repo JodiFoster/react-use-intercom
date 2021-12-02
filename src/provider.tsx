@@ -13,6 +13,12 @@ import {
 } from './types';
 import { isEmptyObject, isSSR } from './utils';
 
+declare global {
+    interface Window { coachIntercomSettings: any; }
+}
+
+window.coachIntercomSettings = window.coachIntercomSettings || {};
+
 export const IntercomProvider: React.FC<IntercomProviderProps> = ({
                                                                     appId,
                                                                     autoBoot = false,
@@ -65,8 +71,8 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
           console.log('window', window)
           console.log('app id', appId)
         // @ts-ignore
-          var windowAppId = window.appId
-          windowAppId.intercomSettings = metaData;
+
+          window.coachIntercomSettings = metaData;
         console.log('calling the api to boot')
         IntercomAPI('boot', metaData);
         isBooted.current = true;
@@ -132,7 +138,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
 
     IntercomAPI('shutdown');
     delete window.Intercom;
-    delete window.intercomSettings;
+    delete window.coachIntercomSettings;
     isBooted.current = false;
   }, []);
 
@@ -151,7 +157,7 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
             return;
           }
           const rawProps = mapIntercomPropsToRawIntercomProps(props);
-          window.intercomSettings = { ...window.intercomSettings, ...rawProps };
+          window.coachIntercomSettings = { ...window.coachIntercomSettings, ...rawProps };
           IntercomAPI('update', rawProps);
         });
       },
