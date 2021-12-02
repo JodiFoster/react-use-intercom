@@ -62,8 +62,11 @@ export const IntercomProvider: React.FC<IntercomProviderProps> = ({
           ...(props && mapIntercomPropsToRawIntercomProps(props)),
         };
 
+          console.log('window', window)
+          console.log('app id', appId)
         // @ts-ignore
-        window[appId]?.intercomSettings = metaData;
+          var windowAppId = window.appId
+          windowAppId.intercomSettings = metaData;
         console.log('calling the api to boot')
         IntercomAPI('boot', metaData);
         isBooted.current = true;
