@@ -9,7 +9,7 @@
  */
 const initialize = (appId: string, timeout = 0) => {
   var w = window;
-  var ic = w[appId].Intercom;
+  var ic = w.Intercom;
   if (typeof ic === 'function') {
     ic('reattach_activator');
     ic('update', w.intercomSettings);
